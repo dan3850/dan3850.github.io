@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Convite Multiplayer · GBAura</title>
+<meta name="description" content="Abra o convite de multiplayer no GBAura.">
+<style>
+:root{font-family:system-ui,-apple-system,Roboto,sans-serif;color:#edf2ff;background:#080b17}
+*{box-sizing:border-box}body{margin:0;min-height:100svh;display:grid;place-items:center;padding:24px;background:radial-gradient(ellipse at top,#242b58 0%,#080b17 66%)}
+main{width:min(100%,470px);border:1px solid #52649d77;border-radius:26px;padding:30px 24px;text-align:center;background:#141a30d9;box-shadow:0 18px 55px #03040baa}
+.logo{font-size:22px;font-weight:800;letter-spacing:.04em;color:#c9b4ff}h1{font-size:26px;margin:18px 0 8px}p{line-height:1.6;color:#ccd4ee}
+button{appearance:none;border:0;border-radius:14px;background:linear-gradient(110deg,#5488ff,#9d6bf4);color:white;font-size:16px;font-weight:700;padding:15px 20px;width:100%;cursor:pointer;margin-top:12px}
+button.secondary{background:transparent;border:1px solid #6c7aa7}
+small{display:block;font-size:13px;color:#a6b1d5;margin-top:20px;line-height:1.55}
+#status{min-height:2rem}#invalid{display:none}
+</style>
+</head>
+<body>
+<main>
+<div class="logo">GBAura</div>
+<h1>Convite de multiplayer</h1>
+<p id="status">Verificando convite recebido…</p>
+<section id="valid" hidden>
+<button id="open" type="button">Abrir no GBAura</button>
+<button id="copy" class="secondary" type="button">Copiar código de conexão</button>
+<small>Os dois jogadores precisam ter o GBAura instalado e trocar seus códigos para concluir a conexão P2P.</small>
+</section>
+<p id="invalid">Nenhum convite válido encontrado. Peça ao outro jogador para compartilhar um novo convite pelo GBAura.</p>
+</main>
+<script>
+"use strict";
+(function(){
+const status=document.getElementById("status");
+const valid=document.getElementById("valid");
+const invalid=document.getElementById("invalid");
+const fragment=location.hash.startsWith("#/")?location.hash.slice(1):"";
+const match=/^\/netplay\/(invite|reply)\?(.+)$/.exec(fragment);
+const params=match?new URLSearchParams(match[2]):null;
+const code=params?params.get("code"):null;
+const re=/^GBA1:(?:\d{1,3}\.){3}\d{1,3}:\d{1,5}:[A-Za-z0-9_-]{16}$/;
+if(!match||!params||params.get("v")!=="1"||!code||!re.test(code)){
+ status.textContent="Este endereço não contém um convite válido.";
+ invalid.style.display="block";return;
+}
+const role=match[1]==="invite"?"P2 (convidado)":"P1 (anfitrião)";
+status.textContent="Convite recebido para "+role+". Toque abaixo para continuar no aplicativo.";
+valid.hidden=false;
+const deepLink="gbaura://netplay/"+match[1]+"?v=1&code="+encodeURIComponent(code);
+document.getElementById("open").addEventListener("click",()=>{location.href=deepLink;});
+document.getElementById("copy").addEventListener("click",async()=>{
+ try{await navigator.clipboard.writeText(code);status.textContent="Código copiado. Cole-o em Multiplayer > Internet direta no GBAura.";}
+ catch(_){const t=document.createElement("textarea");t.value=code;t.style.width="100%";valid.appendChild(t);t.select();status.textContent="Selecione e copie o código exibido abaixo."; }
+});
+})();
+</script>
+</body></html>

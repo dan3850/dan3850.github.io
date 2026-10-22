@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.danilo.gbaura",
+      "sha256_cert_fingerprints": [
+        "77:BB:98:04:A5:AB:1A:37:C0:2D:2C:3D:26:74:6E:62:17:B8:B2:28:83:E6:04:EA:11:44:68:3B:79:D1:42:33"
+      ]
+    }
+  }
+]
